@@ -1,5 +1,7 @@
-from django.http import HttpResponse
+from django.shortcuts import render
+from django.http import HttpResponse   # ← add this line
 
+# Create your views here.
 
-def blog_view(request):
-    return HttpResponse("Hello, blog!")
+def index(request):
+    return HttpResponse("Hello, world!")

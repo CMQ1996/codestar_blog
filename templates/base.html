@@ -1,5 +1,4 @@
 
-
 {% load static %}
 
 {% url 'home' as home_url %}
@@ -114,6 +113,15 @@
 
     <!-- Main Content -->
     <main class="flex-shrink-0 main-bg">
+
+        <!-- Personalised Greeting -->
+        <div class="container mt-3">
+            {% if user.is_authenticated %}
+                <p class="text-end">You are logged in as {{ user }}</p>
+            {% else %}
+                <p class="text-end">You are not logged in</p>
+            {% endif %}
+        </div>
 
         {% block content %}
         <!-- Content Goes here -->

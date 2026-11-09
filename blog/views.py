@@ -24,6 +24,8 @@ def post_detail(request, slug):
     comment_count = post.comments.filter(approved=True).count()
 
     if request.method == "POST" and request.user.is_authenticated:
+        print("Received a POST request")
+
         comment_form = CommentForm(data=request.POST)
 
         if comment_form.is_valid():
@@ -43,6 +45,8 @@ def post_detail(request, slug):
     else:
         comment_form = CommentForm()
 
+    print("About to render template")
+
     return render(
         request,
         "blog/post_detail.html",
@@ -54,5 +58,3 @@ def post_detail(request, slug):
             "comment_form": comment_form,
         },
     )
-
-

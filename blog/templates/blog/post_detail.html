@@ -9,6 +9,7 @@
     <div class="container">
         <div class="row g-0">
             <div class="col-md-6 masthead-text">
+
                 <!-- Post title -->
                 <h1 class="post-title">{{ post.title }}</h1>
 
@@ -16,12 +17,15 @@
                 <p class="post-subtitle">
                     {{ post.author }} | {{ post.created_on }}
                 </p>
+
             </div>
 
             <div class="d-none d-md-block col-md-6 masthead-image">
-                <img src="{% static 'images/default.jpg' %}"
-                     class="scale"
-                     alt="placeholder">
+                <img
+                    src="{% static 'images/default.jpg' %}"
+                    class="scale"
+                    alt="placeholder"
+                >
             </div>
         </div>
     </div>
@@ -48,7 +52,8 @@
     <div class="row">
         <div class="col-12">
             <strong class="text-secondary">
-                <i class="far fa-comments"></i> {{ comment_count }}
+                <i class="far fa-comments"></i>
+                {{ comment_count }}
             </strong>
         </div>
 
@@ -69,10 +74,9 @@
 
                 {% for comment in comments %}
 
-                <div class="p-2 comments
-                    {% if not comment.approved and comment.author == user %}
-                    faded{% elif not comment.approved %} d-none{% endif %}">
+                <div class="p-2 comments{% if not comment.approved and comment.author == user %} faded{% elif not comment.approved %} d-none{% endif %}">
 
+                    <!-- Comment Author and Date -->
                     <p class="font-weight-bold">
                         {{ comment.author }}
 
@@ -82,14 +86,35 @@
                         wrote:
                     </p>
 
+                    <!-- Comment Text -->
                     <div id="comment{{ comment.id }}">
                         {{ comment.body | linebreaks }}
                     </div>
 
+                    <!-- Awaiting Approval Message -->
                     {% if not comment.approved and comment.author == user %}
                     <p class="approval">
                         This comment is awaiting approval
                     </p>
+                    {% endif %}
+
+                    <!-- Delete and Edit Buttons -->
+                    {% if user.is_authenticated and comment.author == user %}
+
+                    <button
+                        class="btn btn-delete"
+                        comment_id="{{ comment.id }}"
+                        type="button">
+                        Delete
+                    </button>
+
+                    <button
+                        class="btn btn-edit"
+                        comment_id="{{ comment.id }}"
+                        type="button">
+                        Edit
+                    </button>
+
                     {% endif %}
 
                 </div>
@@ -109,17 +134,20 @@
 
                     <p>Posting as: {{ user.username }}</p>
 
-                    <form id="commentForm"
-                          method="post"
-                          style="margin-top: 1.3em;">
+                    <!-- Comment Form -->
+                    <form
+                        id="commentForm"
+                        method="post"
+                        style="margin-top: 1.3em;">
 
                         {{ comment_form | crispy }}
 
                         {% csrf_token %}
 
-                        <button id="submitButton"
-                                type="submit"
-                                class="btn btn-signup btn-lg">
+                        <button
+                            id="submitButton"
+                            type="submit"
+                            class="btn btn-signup btn-lg">
                             Submit
                         </button>
 
@@ -138,5 +166,72 @@
 
 </div>
 
+<!-- Delete Confirmation Modal -->
+<div
+    class="modal fade"
+    id="deleteModal"
+    tabindex="-1"
+    aria-labelledby="deleteModalLabel"
+    aria-hidden="true">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="deleteModalLabel">
+                    Delete comment?
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+                Are you sure you want to delete your comment?
+                This action cannot be undone.
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+                    Close
+                </button>
+
+                <!-- Confirm Delete Form -->
+                <form
+                    id="deleteForm"
+                    method="post"
+                    action="">
+
+                    {% csrf_token %}
+
+                    <button
+                        id="deleteConfirm"
+                        type="submit"
+                        class="btn btn-danger">
+                        Delete
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
 {% endblock content %}
 
+<!-- JavaScript for Editing and Deleting Comments -->
+{% block extras %}
+<script src="{% static 'js/comments.js' %}"></script>
+{% endblock extras %}
